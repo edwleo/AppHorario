@@ -1,0 +1,6 @@
+Requiere MySQL Connector
+https://downloads.mysql.com/archives/c-net/
+Versión 8.0.8
+
+
+Agregar: Newtonsoft.Json

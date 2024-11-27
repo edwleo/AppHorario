@@ -17,15 +17,7 @@ namespace BOL
 
         public DataTable getAll()
         {
-            DataTable dt = new DataTable();
-
-            conexion.abrirConexion();
-            MySqlCommand comando = new MySqlCommand("spu_semestres_listar", conexion.getConexion());
-            comando.CommandType = CommandType.StoredProcedure;
-            dt.Load(comando.ExecuteReader());
-            conexion.cerrarConexion();
-
-            return dt;
+            return conexion.getAllData("spu_semestres_listar");
         }
     }
 }

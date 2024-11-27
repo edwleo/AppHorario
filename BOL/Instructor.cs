@@ -17,15 +17,7 @@ namespace BOL
 
         public DataTable getAll()
         {
-            DataTable dt = new DataTable();
-
-            acceso.abrirConexion();
-            MySqlCommand comando = new MySqlCommand("spu_instructores_listar", acceso.getConexion());
-            comando.CommandType = CommandType.StoredProcedure;
-            dt.Load(comando.ExecuteReader());
-            acceso.cerrarConexion();
-
-            return dt;
+            return acceso.getAllData("spu_instructores_listar");
         }
     }
 }

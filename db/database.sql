@@ -16,7 +16,6 @@ CREATE TABLE escuelas
 (
 	id 				INT AUTO_INCREMENT PRIMARY KEY,
     nombreescuela	VARCHAR(30)	NOT NULL,
-    CONSTRAINT uk_codigoescuela_esc UNIQUE (codigoescuela),
     CONSTRAINT uk_nombreescuela_esc UNIQUE (nombreescuela)
 )ENGINE = INNODB;
 
@@ -66,7 +65,8 @@ CREATE TABLE cargas
     idsemestre 		INT 		NOT NULL,
     idinstructor 	INT 		NOT NULL,
     CONSTRAINT fk_idsemestre_car FOREIGN KEY (idsemestre) REFERENCES semestres (id),
-    CONSTRAINT fk_idinstructor_car FOREIGN KEY (idinstructor) REFERENCES instructores (id)
+    CONSTRAINT fk_idinstructor_car FOREIGN KEY (idinstructor) REFERENCES instructores (id),
+    CONSTRAINT uk_idinstructor_car UNIQUE (idsemestre, idinstructor)
 )ENGINE = INNODB;
 
 CREATE TABLE bloques
@@ -120,5 +120,8 @@ INSERT INTO ambientes (idlocacion, tipo, ambiente, aforo, numpiso, estado) VALUE
     (2, 'Laboratorio', 'F301', 27, 3, 'Operativo'),
     (2, 'Laboratorio', 'F302', 27, 3, 'Operativo');
 
-
+INSERT INTO cargas (idsemestre, idinstructor) VALUES 
+	(1, 1),
+    (1, 2);
+    
 -- By NEL

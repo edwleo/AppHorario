@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.Remoting.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 using BOL;
+using DESIGNER.Herramientas;
+using DESIGNER.Clases;
 
 namespace DESIGNER.Formularios
 {
@@ -17,6 +14,7 @@ namespace DESIGNER.Formularios
     {
         Instructor instructor = new Instructor();
         Semestre semestre = new Semestre();
+        Carga carga = new Carga();
 
         public frmAdminInstructores()
         {
@@ -25,41 +23,102 @@ namespace DESIGNER.Formularios
 
         private void frmAdminInstructores_Load(object sender, EventArgs e)
         {
-            grid.DataSource = instructor.getAll();
-            grid.Columns[0].Width = 40;
-            grid.Columns[1].Visible = false;
-            grid.Columns[2].Visible = false;
-            grid.Columns[3].Visible = false;
-            grid.Columns[6].Visible = false;
-            grid.Columns[4].Width = 185;
-            grid.Columns[5].Width = 185;
-            grid.AlternatingRowsDefaultCellStyle.BackColor = Color.LightCyan;
+            gridInstructores.DataSource = instructor.getAll();
+            gridInstructores.Columns[0].Width = 40;
+            gridInstructores.Columns[1].Visible = false;
+            gridInstructores.Columns[2].Visible = false;
+            gridInstructores.Columns[3].Visible = false;
+            gridInstructores.Columns[6].Visible = false;
+            gridInstructores.Columns[4].Width = 185;
+            gridInstructores.Columns[5].Width = 185;
+            gridInstructores.AlternatingRowsDefaultCellStyle.BackColor = Color.LightCyan;
 
             cboSemestre.DataSource = semestre.getAll();
             cboSemestre.DisplayMember = "periodo";
             cboSemestre.ValueMember = "id";
+
+            if (cboSemestre.Text != "")
+            {
+                gridAsignados.DataSource = carga.showInstructor(Convert.ToInt32(cboSemestre.SelectedValue));
+                gridAsignados.Columns[0].Visible = false;
+                gridAsignados.Columns[1].Width = 200;
+                gridAsignados.Columns[2].Width = 200;
+                gridAsignados.ClearSelection();
+            }
+
+            gridAsignados.AlternatingRowsDefaultCellStyle.BackColor = Color.LightCyan;
+        }
+
+        private int checkActivos()
+        {
+            int checkeds = 0;
+            if (gridInstructores.Rows.Count > 0)
+            {
+                for (int i = 0; i < gridInstructores.Rows.Count; i++)
+                {
+                    bool colChecked = Convert.ToBoolean(gridInstructores.Rows[i].Cells["chkSeleccion"].Value);
+                    if (colChecked)
+                    {
+                        checkeds++;
+                    }
+                }
+            }
+
+            return checkeds;
         }
 
         private void btnEvaluar_Click(object sender, EventArgs e)
         {
-            if (grid.Rows.Count > 0)
+            int totalInstructores = gridInstructores.Rows.Count;
+            int totalPeriodos = cboSemestre.Items.Count;
+
+
+            if (totalInstructores == 0)
             {
-                for (int i = 0; i < grid.Rows.Count; i++)
+                MsgBox.advertir("No existen instructores, agregue registros antes de continuar");
+            }
+            
+            if (totalPeriodos == 0 || cboSemestre.Text == "")
+            {
+                MsgBox.advertir("No ha seleccionado o cargado el semestre-periodo");
+            }
+
+
+            if (checkActivos() == 0)
+            {
+                MsgBox.informar("Debe indicar un instructor de la lista");
+            }
+            else
+            {
+                if (MsgBox.preguntar("¿Asignamos estos instructores al periodo " + cboSemestre.Text + "?") == DialogResult.Yes)
                 {
-                    bool colChecked = Convert.ToBoolean(grid.Rows[i].Cells["chkSeleccion"].Value);
-                    if (colChecked)
+                    var listaClaves = new List<ClaveInstructor>();
+
+                    for (int i = 0; i < gridInstructores.Rows.Count; i++)
                     {
-                        MessageBox.Show(grid.Rows[i].Cells[1].Value.ToString());
+                        bool colChecked = Convert.ToBoolean(gridInstructores.Rows[i].Cells["chkSeleccion"].Value);
+                        if (colChecked)
+                        {
+                            listaClaves.Add(new ClaveInstructor { idinstructor = Convert.ToInt32(gridInstructores.Rows[i].Cells[1].Value) });
+                        }
                     }
+
+                    string json = JsonConvert.SerializeObject(listaClaves);
+                    carga.add(Convert.ToInt32(cboSemestre.SelectedValue), json);
+
+                    gridAsignados.DataSource = carga.showInstructor(Convert.ToInt32(cboSemestre.SelectedValue));
+                    setCheckGrid(false);
+                    gridAsignados.ClearSelection();
+                    gridInstructores.ClearSelection();
                 }
             }
         }
 
         private void setCheckGrid(bool estado)
         {
-            for (int i = 0; i < grid.Rows.Count; i++)
+            for (int i = 0; i < gridInstructores.Rows.Count; i++)
             {
-                grid.Rows[i].Cells["chkSeleccion"].Value = estado;
+                gridInstructores.Rows[i].Cells["chkSeleccion"].Value = estado;
             }
         }
 
@@ -75,9 +134,9 @@ namespace DESIGNER.Formularios
 
         private void grid_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            grid.ClearSelection();
+            gridInstructores.ClearSelection();
 
-            if (grid.CurrentRow == null)
+            if (gridInstructores.CurrentRow == null)
             {
                 txtEscuela.Clear();
                 txtIDSENATI.Clear();
@@ -87,11 +146,41 @@ namespace DESIGNER.Formularios
 
         private void grid_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
-            if (grid.Rows.Count > 0) 
+            if (gridInstructores.Rows.Count > 0) 
             {
-                txtEscuela.Text = grid.CurrentRow.Cells[2].Value.ToString();
-                txtIDSENATI.Text = grid.CurrentRow.Cells[3].Value.ToString();
-                txtTipoContrato.Text = grid.CurrentRow.Cells[6].Value.ToString();
+                txtEscuela.Text = gridInstructores.CurrentRow.Cells[2].Value.ToString();
+                txtIDSENATI.Text = gridInstructores.CurrentRow.Cells[3].Value.ToString();
+                txtTipoContrato.Text = gridInstructores.CurrentRow.Cells[6].Value.ToString();
+            }
+        }
+
+        private void btnCerrar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnQuitar_Click(object sender, EventArgs e)
+        {
+            if (gridAsignados.Rows.Count == 0)
+            {
+                MsgBox.informar("No hay datos que puedan ser removidos");
+            }
+            else
+            {
+                if (gridAsignados.CurrentRow == null)
+                {
+                    MsgBox.informar("Seleccione un elemento de la lista");
+                }
+                else
+                {
+                    string instructor = gridAsignados.CurrentRow.Cells[1].Value.ToString() + " " + gridAsignados.CurrentRow.Cells[2].Value.ToString();
+                    if (MsgBox.preguntar("¿Está seguro de quitar a: " + instructor + "?") == DialogResult.Yes)
+                    {
+                        carga.delete(Convert.ToInt32(gridAsignados.CurrentRow.Cells[0].Value));
+                        gridAsignados.DataSource = carga.showInstructor(Convert.ToInt32(cboSemestre.SelectedValue));
+                        gridAsignados.ClearSelection();
+                    }
+                }
             }
         }
     }

@@ -34,7 +34,7 @@
         <mxCell id="iWRJkn_kscTb0MHCaY4Z-10" value="+ id&lt;div&gt;+ nombreescuela&lt;/div&gt;" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" parent="iWRJkn_kscTb0MHCaY4Z-9" vertex="1">
           <mxGeometry y="50" width="160" height="49" as="geometry" />
         </mxCell>
-        <mxCell id="iWRJkn_kscTb0MHCaY4Z-11" value="cargas" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+        <mxCell id="iWRJkn_kscTb0MHCaY4Z-11" value="cargas" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
           <mxGeometry x="750" y="410" width="160" height="120" as="geometry" />
         </mxCell>
         <mxCell id="iWRJkn_kscTb0MHCaY4Z-12" value="+ id&lt;div&gt;+ idsemestre&lt;/div&gt;&lt;div&gt;+ idinstructor&lt;/div&gt;" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" parent="iWRJkn_kscTb0MHCaY4Z-11" vertex="1">
