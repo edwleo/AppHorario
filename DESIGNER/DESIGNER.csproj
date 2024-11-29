@@ -56,6 +56,12 @@
     <Compile Include="Formularios\frmAdminInstructores.Designer.cs">
       <DependentUpon>frmAdminInstructores.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\frmBloques.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\frmBloques.Designer.cs">
+      <DependentUpon>frmBloques.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -67,6 +73,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Formularios\frmAdminInstructores.resx">
       <DependentUpon>frmAdminInstructores.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\frmBloques.resx">
+      <DependentUpon>frmBloques.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
